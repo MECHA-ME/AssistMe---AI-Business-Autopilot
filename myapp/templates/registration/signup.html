@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Web UI - Sign Up</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .wa-top-band { background-color: #00a884; height: 222px; width: 100%; position: fixed; top: 0; left: 0; z-index: -2; }
+        .wa-bg { background-color: #d1d7db; position: fixed; inset: 0; z-index: -3; }
+    </style>
+</head>
+<body class="font-sans antialiased text-gray-800 min-h-screen py-10 overflow-y-auto">
+    <div class="wa-bg"></div>
+    <div class="wa-top-band"></div>
+
+    <div class="w-full max-w-5xl mx-auto px-4 pt-4">
+        <!-- Logo Header -->
+        <div class="flex items-center gap-3 mb-6 ml-4">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4"></path></svg>
+            <h1 class="text-white font-medium tracking-wide text-sm uppercase">AI Business Autopilot</h1>
+        </div>
+
+        <!-- Main Card -->
+        <div class="bg-white rounded shadow-lg overflow-hidden min-h-[500px] flex flex-col relative w-full mb-10">
+            
+            <div class="p-8 md:p-12 w-full max-w-3xl mx-auto flex flex-col justify-center">
+                <h2 class="text-3xl font-light text-[#41525d] mb-2 text-center">Initialize your Account</h2>
+                <p class="text-center text-[#8696a0] mb-8">Setup a secure administrator login to access the multi-channel tools.</p>
+                
+                <form method="POST" action="{% url 'signup' %}" class="w-full bg-[#f0f2f5] p-8 rounded-lg shadow-inner">
+                    {% csrf_token %}
+                    
+                    {% if form.errors %}
+                    <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm">
+                        Please correct the errors below to securely create your account.
+                    </div>
+                    {% endif %}
+
+                    <div class="space-y-5">
+                        {% for field in form %}
+                        <div class="flex flex-col">
+                            <label class="text-sm font-medium text-[#41525d] mb-1">{{ field.label }}</label>
+                            <input type="{{ field.field.widget.input_type|default:'text' }}" name="{{ field.name }}" id="{{ field.id_for_label }}" class="w-full bg-white border border-gray-300 rounded px-3 py-2 text-md focus:outline-none focus:ring-1 focus:ring-[#00a884] focus:border-[#00a884] transition" placeholder="{{ field.label }}" {% if field.field.required %}required{% endif %}>
+                            {% if field.errors %}
+                                <div class="text-red-500 text-xs mt-1">{% for error in field.errors %}{{ error }} {% endfor %}</div>
+                            {% endif %}
+                            {% if field.help_text %}
+                            <p class="text-[#8696a0] text-xs mt-1">{{ field.help_text|safe }}</p>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+
+                        <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+                            <button type="submit" class="w-full sm:w-auto bg-[#00a884] hover:bg-[#008f6f] text-white font-medium py-3 px-8 rounded-full shadow-md transition-colors whitespace-nowrap">
+                                Create Account
+                            </button>
+                            <a href="{% url 'login' %}" class="text-[#41525d] hover:text-[#00a884] underline text-sm font-medium">Already have an account? Log In</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

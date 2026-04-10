@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Web UI - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .wa-top-band { background-color: #00a884; height: 222px; width: 100%; position: fixed; top: 0; left: 0; z-index: -2; }
+        .wa-bg { background-color: #d1d7db; position: fixed; inset: 0; z-index: -3; }
+    </style>
+</head>
+<body class="font-sans antialiased text-gray-800 min-h-screen py-10 overflow-y-auto">
+    <div class="wa-bg"></div>
+    <div class="wa-top-band"></div>
+
+    <div class="w-full max-w-5xl mx-auto px-4 pt-8">
+        <!-- Logo Header -->
+        <div class="flex items-center gap-3 mb-8 ml-4">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4"></path></svg>
+            <h1 class="text-white font-medium tracking-wide text-sm uppercase">AI Business Autopilot</h1>
+        </div>
+
+        <!-- Main Card -->
+        <div class="bg-white rounded shadow-lg flex flex-col md:flex-row overflow-hidden min-h-[500px]">
+            
+            <div class="p-12 md:w-2/3 flex flex-col justify-center">
+                <h2 class="text-3xl font-light text-[#41525d] mb-8">Access your Autopilot from the Web.</h2>
+                
+                <form method="POST" action="{% url 'login' %}">
+                    {% csrf_token %}
+                    
+                    {% if form.errors %}
+                    <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm">
+                        Invalid identifier or password. Please try again.
+                    </div>
+                    {% endif %}
+
+                    <div class="space-y-6 max-w-sm">
+                        <div>
+                            <input type="text" name="username" class="w-full border-b-2 border-gray-300 focus:border-[#00a884] px-0 py-2 text-lg focus:outline-none transition-colors" placeholder="Username" required>
+                        </div>
+                        
+                        <div>
+                            <input type="password" name="password" class="w-full border-b-2 border-gray-300 focus:border-[#00a884] px-0 py-2 text-lg focus:outline-none transition-colors" placeholder="Password" required>
+                        </div>
+
+                        <input type="hidden" name="next" value="{{ next|default:'/' }}">
+
+                        <div class="pt-4 flex items-center justify-between">
+                            <button type="submit" class="bg-[#00a884] hover:bg-[#008f6f] text-white font-medium py-3 px-8 rounded-full shadow-md transition-colors">
+                                Log In
+                            </button>
+                            <a href="{% url 'signup' %}" class="text-[#00a884] hover:underline text-sm font-medium">Create Account</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="bg-[#f0f2f5] md:w-1/3 p-12 flex flex-col items-center justify-center border-l border-gray-200">
+                <div class="text-center">
+                    <h3 class="text-xl text-[#41525d] mb-4">Live Sync Active</h3>
+                    <div class="w-48 h-48 bg-white p-2 rounded shadow-sm flex items-center justify-center mx-auto border border-gray-200">
+                        <!-- Mock QR Code visual -->
+                        <div class="grid grid-cols-4 gap-1 w-full h-full p-2 bg-gray-50">
+                            <div class="bg-gray-800 rounded-tl shadow"></div><div class="bg-gray-800"></div><div class="bg-gray-800"></div><div class="bg-gray-800 rounded-tr shadow"></div>
+                            <div class="bg-gray-800 opacity-50"></div><div class="bg-gray-800"></div><div class="bg-gray-800"></div><div class="bg-gray-800"></div>
+                            <div class="bg-gray-800"></div><div class="bg-gray-800"></div><div class="bg-gray-800"></div><div class="bg-gray-800"></div>
+                            <div class="bg-gray-800 rounded-bl shadow"></div><div class="bg-gray-800 opacity-80"></div><div class="bg-gray-800"></div><div class="bg-[#00a884] rounded-br shadow"></div>
+                        </div>
+                    </div>
+                    <p class="mt-6 text-sm text-[#8696a0]">Connects securely to your Twilio Webhooks.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

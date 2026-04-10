@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - AI Business Autopilot</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <nav class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <h1 class="text-xl font-semibold text-gray-900">My Dashboard</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="{% url 'whatsapp_connect' %}" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700">Connect WhatsApp</a>
+                    <a href="{% url 'logout' %}" class="text-gray-700 hover:text-gray-900">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        {% if messages %}
+        <div class="mb-4">
+            {% for message in messages %}
+            <div class="p-4 rounded {% if message.tags == 'error' %}bg-red-100 text-red-700{% else %}bg-green-100 text-green-700{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6 px-4 sm:px-0">
+            <div class="bg-white shadow rounded-lg p-5">
+                <h2 class="text-lg font-semibold text-gray-900">Hello, {{ user_name }}</h2>
+                <p class="text-sm text-gray-500 mt-2">Username: {{ request.user.username }}</p>
+                {% if user_email %}
+                <p class="text-sm text-gray-500">Email: {{ user_email }}</p>
+                {% endif %}
+            </div>
+            <div class="bg-white shadow rounded-lg p-5">
+                <h2 class="text-lg font-semibold text-gray-900">Loyalty</h2>
+                <p class="mt-2 text-sm text-gray-500">Tier: {{ loyalty_tier }}</p>
+                <p class="mt-2 text-3xl font-bold text-blue-700">{{ loyalty_points }} pts</p>
+            </div>
+            <div class="bg-white shadow rounded-lg p-5">
+                <h2 class="text-lg font-semibold text-gray-900">Quick Stats</h2>
+                <p class="mt-2 text-sm text-gray-500">Trending demand is updated every 30 seconds.</p>
+            </div>
+        </div>
+        <div class="px-4 py-6 sm:px-0">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Bookings Section -->
+                <div class="bg-white overflow-hidden shadow rounded-lg">
+                    <div class="px-4 py-5 sm:p-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">My Bookings</h3>
+                        <div class="mt-5 space-y-4">
+                            <h4 class="text-md font-medium text-gray-700">Upcoming Slots</h4>
+                            {% for booking in upcoming_bookings %}
+                            <div class="border rounded-md p-4">
+                                <div class="flex justify-between items-start gap-4">
+                                    <div>
+                                        <h4 class="text-sm font-medium text-gray-900">{{ booking.service }}</h4>
+                                        <p class="text-sm text-gray-500">{{ booking.time_slot|date:"M d, Y - H:i" }}</p>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                            Confirmed
+                                        </span>
+                                        <form method="post" class="inline">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="booking_id" value="{{ booking.id }}">
+                                            <button type="submit" name="delete_booking" class="text-red-600 text-xs font-semibold hover:text-red-800">Delete</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <p class="text-gray-500">No upcoming bookings.</p>
+                            {% endfor %}
+                            
+                            <h4 class="text-md font-medium text-gray-700 mt-6">Cancelled Slots</h4>
+                            {% for booking in cancelled_bookings %}
+                            <div class="border rounded-md p-4 bg-red-50">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <h4 class="text-sm font-medium text-gray-900">{{ booking.service }}</h4>
+                                        <p class="text-sm text-gray-500">{{ booking.time_slot|date:"M d, Y - H:i" }}</p>
+                                    </div>
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                        Cancelled
+                                    </span>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <p class="text-gray-500">No cancelled bookings.</p>
+                            {% endfor %}
+
+                            <h4 class="text-md font-medium text-gray-700 mt-6">Deleted Slots</h4>
+                            {% for booking in deleted_bookings %}
+                            <div class="border rounded-md p-4 bg-gray-50">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <h4 class="text-sm font-medium text-gray-900">{{ booking.service }}</h4>
+                                        <p class="text-sm text-gray-500">{{ booking.time_slot|date:"M d, Y - H:i" }}</p>
+                                    </div>
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                        Deleted
+                                    </span>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <p class="text-gray-500">No deleted bookings.</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notifications Section -->
+                <div class="bg-white overflow-hidden shadow rounded-lg">
+                    <div class="px-4 py-5 sm:p-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Notifications</h3>
+                        <div class="mt-5 space-y-3">
+                            {% for notif in request.user.notifications.all %}
+                            <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded">
+                                <h4 class="font-semibold text-gray-900">{{ notif.title }}</h4>
+                                <p class="text-sm text-gray-700 mt-2">{{ notif.message }}</p>
+                                <p class="text-xs text-gray-500 mt-2">{{ notif.created_at|date:"M d, Y H:i" }}</p>
+                            </div>
+                            {% empty %}
+                            <p class="text-gray-500">No notifications yet.</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Book Slot Section -->
+                <div class="bg-white overflow-hidden shadow rounded-lg">
+                    <div class="px-4 py-5 sm:p-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Book a Slot</h3>
+                        <form method="post" class="mt-5 space-y-4">
+                            {% csrf_token %}
+                            <div>
+                                <label for="service" class="block text-sm font-medium text-gray-700">Service</label>
+                                <select id="service" name="service" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="PC Hardware Consultation">PC Hardware Consultation</option>
+                                    <option value="Saloon Appointment">Saloon Appointment</option>
+                                    <option value="Automobile Service">Automobile Service</option>
+                                    <option value="Hardware Shop">Hardware Shop</option>
+                                    <option value="Food Delivery">Food Delivery</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="date" class="block text-sm font-medium text-gray-700">Date</label>
+                                <input type="date" id="date" name="date" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" required>
+                            </div>
+                            <div>
+                                <label for="time" class="block text-sm font-medium text-gray-700">Time</label>
+                                <select id="time" name="time" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="10:00">10:00 AM</option>
+                                    <option value="14:00">2:00 PM</option>
+                                    <option value="16:00">4:00 PM</option>
+                                </select>
+                            </div>
+                            <button type="submit" name="book_slot" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">Book Slot</button>
+                        </form>
+                        <div class="mt-8">
+                            <h4 class="text-lg font-medium text-gray-900">Feedback</h4>
+                            <form method="post" class="space-y-4 mt-4">
+                                {% csrf_token %}
+                                <div>
+                                    <label for="rating" class="block text-sm font-medium text-gray-700">Rating</label>
+                                    <select id="rating" name="rating" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                        <option value="1">1 star</option>
+                                        <option value="2">2 stars</option>
+                                        <option value="3">3 stars</option>
+                                        <option value="4">4 stars</option>
+                                        <option value="5" selected>5 stars</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="comment" class="block text-sm font-medium text-gray-700">Your Feedback</label>
+                                    <textarea id="comment" name="comment" rows="3" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="Tell us what you liked or what we can improve."></textarea>
+                                </div>
+                                <button type="submit" name="submit_feedback" class="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700">Submit Feedback</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Section -->
+                <div class="bg-white overflow-hidden shadow rounded-lg">
+                    <div class="px-4 py-5 sm:p-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Chat with AssistMe</h3>
+                        <div class="mt-5 space-y-3 max-h-96 overflow-y-auto border rounded p-3 bg-gray-50">
+                            {% for msg in chat_history %}
+                            <div class="flex {% if msg.user_message %}justify-end{% else %}justify-start{% endif %}">
+                                <div class="max-w-xs px-4 py-2 rounded-lg
+                                    {% if msg.user_message %}bg-blue-600 text-white{% else %}bg-gray-200 text-gray-900{% endif %}">
+                                    <p class="text-sm">{{ msg.user_message|default:msg.ai_response }}</p>
+                                    <p class="text-xs mt-1 opacity-70">{{ msg.timestamp|date:"H:i" }}</p>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <p class="text-gray-500 text-center py-4">Start chatting with AssistMe!</p>
+                            {% endfor %}
+                        </div>
+                        <form id="chat-form" onsubmit="sendMessage(event)" class="mt-4 flex gap-2">
+                            {% csrf_token %}
+                            <input type="text" id="chat-input" placeholder="Ask AssistMe about PC builds, availability, bookings..." class="flex-1 border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Send</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="bg-white shadow rounded-lg overflow-hidden">
+                <div class="px-4 py-5 sm:p-6">
+                    <h3 class="text-lg font-medium text-gray-900">Stock Chart</h3>
+                    <p class="mt-1 text-sm text-gray-500">Current inventory levels for top products.</p>
+                    <div class="mt-6 h-80">
+                        <canvas id="stockChart" class="w-full h-full"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white shadow rounded-lg overflow-hidden">
+                <div class="px-4 py-5 sm:p-6">
+                    <h3 class="text-lg font-medium text-gray-900">Demand Chart</h3>
+                    <p class="mt-1 text-sm text-gray-500">Trending services based on recent bookings.</p>
+                    <div class="mt-6 h-80">
+                        <canvas id="demandChart" class="w-full h-full"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white shadow rounded-lg overflow-hidden">
+                <div class="px-4 py-5 sm:p-6">
+                    <h3 class="text-lg font-medium text-gray-900">Sales Chart</h3>
+                    <p class="mt-1 text-sm text-gray-500">Confirmed bookings by service.</p>
+                    <div class="mt-6 h-80">
+                        <canvas id="salesChart" class="w-full h-full"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+            <div class="bg-white shadow rounded-lg overflow-hidden">
+                <div class="px-4 py-5 sm:p-6">
+                    <h3 class="text-lg font-medium text-gray-900">Inventory Snapshot</h3>
+                    <p class="mt-2 text-sm text-gray-600">Low stock items are highlighted for reorders.</p>
+                    <div class="mt-4 space-y-3">
+                        {% for product in products %}
+                        <div class="rounded-lg border border-gray-200 p-3 flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">{{ product.name }}</p>
+                                <p class="text-xs text-gray-500">SKU: {{ product.sku|default:'N/A' }} | {{ product.category }}</p>
+                            </div>
+                            <span class="px-3 py-1 rounded-full text-xs font-semibold {% if product.stock_quantity <= 5 %}bg-red-100 text-red-800{% else %}bg-green-100 text-green-800{% endif %}">
+                                {{ product.stock_quantity }} in stock
+                            </span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        function getCsrfToken() {
+            const element = document.querySelector('[name=csrfmiddlewaretoken]');
+            return element ? element.value : '';
+        }
+
+        async function sendMessage(event) {
+            event.preventDefault();
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            input.value = '';
+            try {
+                const res = await fetch('/api/web-chat/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCsrfToken(),
+                    },
+                    body: JSON.stringify({message: text, phone: '{{ phone }}'})
+                });
+                const data = await res.json();
+                if (data.reply) {
+                    window.location.reload();
+                }
+            } catch (err) {
+                console.error('Chat error:', err);
+                alert('Chat failed. Please refresh the page and try again.');
+            }
+        }
+
+        let stockChart = null;
+        let demandChart = null;
+        let salesChart = null;
+        const stockLabels = {{ stock_labels|safe }};
+        const stockValues = {{ stock_values|safe }};
+        const demandLabels = {{ demand_labels|safe }};
+        const demandValues = {{ demand_values|safe }};
+        const salesLabels = {{ sales_labels|safe }};
+        const salesValues = {{ sales_values|safe }};
+
+        const stockChartElement = document.getElementById('stockChart');
+        if (stockChartElement) {
+            stockChart = new Chart(stockChartElement, {
+                type: 'bar',
+                data: {
+                    labels: stockLabels,
+                    datasets: [
+                        {
+                            label: 'Stock Quantity',
+                            data: stockValues,
+                            backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        const demandChartElement = document.getElementById('demandChart');
+        if (demandChartElement) {
+            demandChart = new Chart(demandChartElement, {
+                type: 'line',
+                data: {
+                    labels: demandLabels,
+                    datasets: [
+                        {
+                            label: 'Service Demand',
+                            data: demandValues,
+                            fill: true,
+                            backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                            borderColor: 'rgba(16, 185, 129, 0.9)',
+                            tension: 0.3,
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        const salesChartElement = document.getElementById('salesChart');
+        if (salesChartElement) {
+            salesChart = new Chart(salesChartElement, {
+                type: 'doughnut',
+                data: {
+                    labels: salesLabels,
+                    datasets: [
+                        {
+                            label: 'Confirmed Bookings',
+                            data: salesValues,
+                            backgroundColor: [
+                                'rgba(59, 130, 246, 0.7)',
+                                'rgba(34, 197, 94, 0.7)',
+                                'rgba(168, 85, 247, 0.7)',
+                                'rgba(249, 115, 22, 0.7)',
+                                'rgba(236, 72, 153, 0.7)',
+                            ],
+                            borderColor: 'rgba(255, 255, 255, 1)',
+                            borderWidth: 2,
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        }
+                    }
+                }
+            });
+        }
+
+        async function refreshDashboardData() {
+            try {
+                const res = await fetch('{% url 'dashboard_data' %}');
+                const data = await res.json();
+                if (stockChart && data.stock_labels) {
+                    stockChart.data.labels = data.stock_labels;
+                    stockChart.data.datasets[0].data = data.stock_values;
+                    stockChart.update();
+                }
+                if (demandChart && data.demand_labels) {
+                    demandChart.data.labels = data.demand_labels;
+                    demandChart.data.datasets[0].data = data.demand_values;
+                    demandChart.update();
+                }
+                if (salesChart && data.sales_labels) {
+                    salesChart.data.labels = data.sales_labels;
+                    salesChart.data.datasets[0].data = data.sales_values;
+                    salesChart.update();
+                }
+            } catch (err) {
+                console.error('Dashboard refresh failed:', err);
+            }
+        }
+
+        setInterval(refreshDashboardData, 30000);
+    </script>
+</body>
+</html>

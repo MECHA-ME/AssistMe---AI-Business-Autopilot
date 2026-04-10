@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Override - Admin Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .neon-border {
+            box-shadow: 0 0 10px #f43f5e, 0 0 20px #f43f5e, inset 0 0 10px #f43f5e;
+            border: 1px solid #f43f5e;
+        }
+        .scanline {
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(244,63,94,0.2) 50%, rgba(0,0,0,0) 100%);
+            position: absolute;
+            opacity: 0.1;
+            animation: scanline 8s linear infinite;
+        }
+        @keyframes scanline {
+            0% { top: -100px; }
+            100% { top: 100%; }
+        }
+    </style>
+</head>
+<body class="bg-black text-rose-50 min-h-screen flex flex-col items-center justify-center font-mono relative overflow-hidden">
+    
+    <div class="scanline"></div>
+
+    <div class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
+
+    <div class="bg-gray-900/80 backdrop-blur-md p-12 rounded-lg w-full max-w-lg relative z-10 neon-border">
+        
+        <div class="text-center mb-10">
+            <h1 class="text-4xl font-black text-rose-500 tracking-widest uppercase mb-2 animate-pulse">ADMIN_ACCESS</h1>
+            <div class="h-0.5 w-full bg-rose-500/50 mt-4"></div>
+            <p class="text-xs text-rose-400/70 mt-4 font-bold tracking-[0.2em]">UNAUTHORIZED ACCESS STRICTLY PROHIBITED</p>
+        </div>
+
+        <form method="POST" action="{{ app_path }}">
+            {% csrf_token %}
+            
+            {% if form.errors and not form.non_field_errors %}
+            <div class="mb-4 text-rose-500 text-xs border border-rose-500/30 p-2 bg-rose-500/10 uppercase">
+                ERROR: Invalid credentials.
+            </div>
+            {% endif %}
+            {% if form.non_field_errors %}
+            <div class="mb-4 text-rose-500 text-xs border border-rose-500/30 p-2 bg-rose-500/10 uppercase">
+                ERROR: {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+
+            <div class="space-y-6">
+                <div>
+                    <label class="block text-xs uppercase tracking-widest text-rose-400 mb-2">> IDENTIFIER</label>
+                    <input type="text" name="username" class="w-full bg-black border-2 border-rose-900 focus:border-rose-500 rounded-none px-4 py-3 text-rose-100 placeholder-rose-900/50 focus:outline-none transition font-mono" placeholder="root" required autofocus>
+                </div>
+                
+                <div>
+                    <label class="block text-xs uppercase tracking-widest text-rose-400 mb-2">> SECURITY CODES</label>
+                    <input type="password" name="password" class="w-full bg-black border-2 border-rose-900 focus:border-rose-500 rounded-none px-4 py-3 text-rose-100 placeholder-rose-900/50 focus:outline-none transition font-mono" placeholder="********" required>
+                </div>
+
+                <input type="hidden" name="next" value="{{ next }}">
+
+                <button type="submit" class="w-full bg-rose-600 hover:bg-rose-500 text-white uppercase tracking-[0.3em] font-bold py-4 px-4 transition duration-300 mt-6 shadow-[0_0_15px_rgba(225,29,72,0.5)]">
+                    INITIALIZE LOGIN
+                </button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
