@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Allot Slot</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center">
+    <div class="max-w-md w-full bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-2xl font-bold mb-4">Allot Slot for Booking</h2>
+        <p class="mb-4">Booking: {{ booking.service }} for {{ booking.customer_phone }}</p>
+        <form method="post">
+            {% csrf_token %}
+            <label class="block mb-2">Status:</label>
+            <select name="status" class="w-full border rounded p-2 mb-4">
+                <option value="Confirmed" {% if booking.status == 'Confirmed' %}selected{% endif %}>Confirmed</option>
+                <option value="In Progress" {% if booking.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                <option value="Completed" {% if booking.status == 'Completed' %}selected{% endif %}>Completed</option>
+                <option value="Cancelled" {% if booking.status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+            </select>
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Update</button>
+            <a href="{% url 'admin_dashboard' %}" class="ml-4 text-gray-600">Cancel</a>
+        </form>
+    </div>
+</body>
+</html>

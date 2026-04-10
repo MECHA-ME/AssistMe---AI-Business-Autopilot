@@ -1,0 +1,17 @@
+# Local environment variables
+.env
+
+# Database
+db.sqlite3
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Django static files
+/static/
+
+# VS Code
+.vscode/
