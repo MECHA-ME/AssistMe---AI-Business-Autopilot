@@ -1,0 +1,32 @@
+{% extends 'myapp/base.html' %}
+
+{% block content %}
+<div class="glass auth-card" style="max-width: 600px;">
+    <h2 class="mb-4 text-center">Add New Property</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.errors %}
+                    <div class="form-error">
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <div class="flex gap-4 mt-8">
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary w-full text-center">Cancel</a>
+            <button type="submit" class="btn btn-primary w-full">Save Property</button>
+        </div>
+    </form>
+</div>
+<script>
+    document.querySelectorAll('input:not([type="file"]), select, textarea').forEach(el => el.classList.add('form-control'));
+    document.querySelectorAll('input[type="file"]').forEach(el => {
+        el.style.display = 'block';
+        el.style.marginTop = '0.5rem';
+    });
+</script>
+{% endblock %}

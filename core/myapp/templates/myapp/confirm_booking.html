@@ -1,0 +1,22 @@
+{% extends 'myapp/base.html' %}
+
+{% block content %}
+<div class="glass auth-card text-center" style="max-width: 500px;">
+    <h2 class="mb-4">Confirm Booking</h2>
+    <p class="text-muted mb-8">Are you sure you want to request this booking?</p>
+    
+    <div class="glass-panel text-left mb-8" style="padding: 1.5rem; border-radius: var(--radius-sm);">
+        <p class="mb-2"><strong class="text-muted mr-2">Property:</strong> <span class="font-bold">{{ slot.property.title }}</span></p>
+        <p class="mb-2"><strong class="text-muted mr-2">Date:</strong> <span>{{ slot.date }}</span></p>
+        <p><strong class="text-muted mr-2">Time:</strong> <span>{{ slot.time }}</span></p>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="flex gap-4 justify-center">
+            <a href="{% url 'property_detail' slot.property.pk %}" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">Confirm Booking</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

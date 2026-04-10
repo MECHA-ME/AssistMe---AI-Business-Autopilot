@@ -1,0 +1,33 @@
+{% extends 'myapp/base.html' %}
+
+{% block content %}
+<div class="glass auth-card">
+    <div style="position: absolute; top: -20px; right: -20px; width: 100px; height: 100px; background: var(--primary); filter: blur(40px); border-radius: 50%; z-index: -1;"></div>
+    
+    <h2 class="text-center mb-8">Create an Account</h2>
+    
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.errors %}
+                    <div class="form-error">
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary w-full mt-4" style="padding: 1rem;">Sign Up</button>
+    </form>
+    
+    <p class="text-center mt-8 text-muted">
+        Already have an account? <a href="{% url 'login' %}" class="text-primary font-bold" style="text-decoration: none;">Log In</a>
+    </p>
+</div>
+
+<script>
+    document.querySelectorAll('input, select').forEach(el => el.classList.add('form-control'));
+</script>
+{% endblock %}

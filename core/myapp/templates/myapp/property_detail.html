@@ -1,0 +1,50 @@
+{% extends 'myapp/base.html' %}
+
+{% block content %}
+<div class="glass mb-8" style="overflow: hidden;">
+    <div style="position: relative;">
+        {% if property.image %}
+            <img src="{{ property.image.url }}" alt="{{ property.title }}" style="width: 100%; height: 400px; object-fit: cover;">
+        {% else %}
+            <div style="width: 100%; height: 400px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; color: var(--text-muted);">No image available</div>
+        {% endif %}
+        <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(15,17,26,1), transparent); height: 150px;"></div>
+    </div>
+    
+    <div style="padding: 2rem;">
+        <div class="flex justify-between" style="align-items: flex-start;">
+            <div>
+                <h1 class="text-main mb-2">{{ property.title }}</h1>
+                <p class="text-muted mb-4" style="font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    {{ property.location }}
+                </p>
+            </div>
+            <div class="text-primary font-bold" style="font-size: 1.5rem;">
+                ${{ property.price }}<span class="text-muted" style="font-size: 1rem;">/month</span>
+            </div>
+        </div>
+        
+        <h3 class="mt-8 mb-4">Description</h3>
+        <p class="text-main" style="white-space: pre-wrap; line-height: 1.8;">{{ property.description }}</p>
+        
+        <h3 class="mt-8 mb-4">Available Slots</h3>
+        <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem;">
+            {% for slot in slots %}
+                {% if slot.is_available %}
+                    <div class="glass-panel" style="padding: 1rem; text-align: center; border-radius: 8px;">
+                        <div class="font-bold mb-2">{{ slot.date }}</div>
+                        <div class="text-muted mb-4">{{ slot.time }}</div>
+                        {% if user.is_buyer %}
+                            <a href="{% url 'book_slot' slot.pk %}" class="btn btn-primary w-full" style="font-size: 0.8rem;">Book Slot</a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% empty %}
+                <p class="empty-state" style="grid-column: 1 / -1; padding: 1.5rem;">No slots available currently.</p>
+            {% endfor %}
+        </div>
+        
+    </div>
+</div>
+{% endblock %}

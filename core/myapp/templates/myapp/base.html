@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}RentSure | Premium Rentals{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'myapp/styles.css' %}">
+</head>
+<body>
+    <nav class="navbar glass fade-in-up">
+        <a href="{% url 'home' %}" class="nav-brand">RentSure.</a>
+        <div class="nav-links">
+            {% if user.is_authenticated %}
+                <a href="{% url 'dashboard' %}" class="nav-item">Dashboard</a>
+                <span class="text-muted font-bold">{{ user.username }}</span>
+                <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" style="background:none; border:none; cursor:pointer;" class="text-primary font-bold">Log Out</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}" class="nav-item">Log In</a>
+                <a href="{% url 'register' %}" class="btn btn-primary" style="padding: 0.5rem 1.25rem;">Sign Up</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="container fade-in-up" style="animation-delay: 0.1s;">
+        {% if messages %}
+            <div style="position: fixed; top: 80px; right: 2rem; z-index: 1050; display:flex; flex-direction:column; gap:0.5rem; max-width: 350px;">
+            {% for message in messages %}
+                <div class="glass-panel" style="padding: 1rem 1.5rem; border-left: 4px solid {% if message.tags == 'error' %}var(--danger){% else %}var(--secondary){% endif %}; border-radius: var(--radius-sm); animation: fadeInUp 0.5s ease;">
+                    {{ message }}
+                </div>
+            {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </div>
+    
+    <footer class="text-center text-muted mb-8 mt-8">
+        <p>&copy; 2026 RentSure. Designed for the future of renting.</p>
+    </footer>
+
+    <script>
+        // Auto-hide messages after 4 seconds
+        setTimeout(() => {
+            const alerts = document.querySelectorAll('.glass-panel[style*="border-left"]');
+            alerts.forEach(alert => {
+                alert.style.opacity = '0';
+                alert.style.transition = 'opacity 0.5s ease';
+                setTimeout(() => alert.remove(), 500);
+            });
+        }, 4000);
+    </script>
+</body>
+</html>

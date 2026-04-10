@@ -1,0 +1,29 @@
+{% extends 'myapp/base.html' %}
+
+{% block content %}
+<div class="glass auth-card">
+    <h2 class="text-center mb-2">Add Slot</h2>
+    <p class="text-center text-muted mb-8">For: <span class="font-bold text-main">{{ property.title }}</span></p>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.errors %}
+                    <div class="form-error">
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <div class="flex gap-4 mt-8">
+            <a href="{% url 'property_detail' property.pk %}" class="btn btn-secondary w-full text-center">Cancel</a>
+            <button type="submit" class="btn btn-primary w-full">Add Slot</button>
+        </div>
+    </form>
+</div>
+<script>
+    document.querySelectorAll('input, select').forEach(el => el.classList.add('form-control'));
+</script>
+{% endblock %}

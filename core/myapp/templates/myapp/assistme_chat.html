@@ -1,0 +1,114 @@
+{% extends 'myapp/base.html' %}
+
+{% block title %}Gemini AssistMe{% endblock %}
+
+{% block content %}
+<div class="page-heading mb-8 flex justify-between items-start gap-4">
+    <div>
+        <h2 class="mb-2">My Dashboard</h2>
+        <p class="text-muted">Gemini AssistMe is ready to guide you through bookings, availability checks, and hardware recommendations.</p>
+    </div>
+    <a href="{% url 'dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+</div>
+
+<div class="assistant-grid">
+    <aside class="assistant-sidebar">
+        <div class="assistant-card">
+            <div class="assistant-card-title">
+                <h3>Book a Slot</h3>
+                <p class="text-muted">Fast booking options for your next service.</p>
+            </div>
+            <label>Service</label>
+            <select class="form-control">
+                <option>PC Hardware Consultation</option>
+                <option>Saloon Appointment</option>
+                <option>Food Delivery</option>
+                <option>Automobile Service</option>
+            </select>
+
+            <label>Date</label>
+            <input type="text" class="form-control" placeholder="mm/dd/yyyy">
+
+            <label>Time</label>
+            <select class="form-control">
+                <option>10:00 AM</option>
+                <option>11:00 AM</option>
+                <option>01:00 PM</option>
+                <option>03:00 PM</option>
+                <option>05:00 PM</option>
+            </select>
+
+            <button type="button" class="btn btn-primary mt-4">Book Slot</button>
+        </div>
+
+        <div class="assistant-card">
+            <div class="assistant-card-title">
+                <h3>Feedback</h3>
+                <p class="text-muted">Tell us what you liked or what we can improve.</p>
+            </div>
+            <label>Rating</label>
+            <select class="form-control">
+                <option>5 stars</option>
+                <option>4 stars</option>
+                <option>3 stars</option>
+                <option>2 stars</option>
+                <option>1 star</option>
+            </select>
+            <label>Your Feedback</label>
+            <textarea class="form-control" rows="4" placeholder="Tell us what you liked or what we can improve."></textarea>
+            <button type="button" class="btn btn-success mt-4">Submit Feedback</button>
+        </div>
+    </aside>
+
+    <section class="assistant-chat-panel">
+        <div class="assistant-chat-header card glass-panel mb-6">
+            <div>
+                <h3>Chat with AssistMe</h3>
+                <p class="text-muted">Ask AssistMe about PC builds, availability, bookings, or current inventory.</p>
+            </div>
+        </div>
+
+        <div class="chat-container">
+            <div class="chat-messages" id="chatWindow">
+                {% for msg in messages_list %}
+                    <div class="message-bubble {% if msg.sender == request.user %}message-sent{% else %}message-received{% endif %}">
+                        <div>{{ msg.content }}</div>
+                        <div class="message-time">{{ msg.timestamp|date:"M d, g:i a" }}</div>
+                    </div>
+                {% empty %}
+                    <p class="text-center text-muted mt-8">No messages yet. Ask AssistMe a question to get started.</p>
+                {% endfor %}
+            </div>
+
+            <form method="post" class="chat-input" id="assistantChatForm">
+                {% csrf_token %}
+                {{ form.content }}
+                <button type="submit" class="btn btn-primary">Send</button>
+            </form>
+        </div>
+    </section>
+</div>
+
+<script>
+    const textarea = document.querySelector('.chat-input textarea');
+    if (textarea) {
+        textarea.classList.add('form-control');
+        textarea.style.resize = 'none';
+        textarea.style.flex = '1';
+    }
+
+    const chatWindow = document.getElementById('chatWindow');
+    if (chatWindow) {
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+
+    if (textarea) {
+        textarea.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                document.getElementById('assistantChatForm').submit();
+            }
+        });
+    }
+</script>
+{% endblock %}

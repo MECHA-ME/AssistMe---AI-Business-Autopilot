@@ -1,0 +1,23 @@
+{% extends 'myapp/base.html' %}
+
+{% block content %}
+<div class="glass auth-card">
+    <h2 class="text-center mb-8">Login to RentSure</h2>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary w-full mt-4" style="padding: 1rem;">Login</button>
+    </form>
+    <p class="text-center mt-8 text-muted">
+        Don't have an account? <a href="{% url 'register' %}" class="text-primary font-bold">Register here</a>
+    </p>
+</div>
+<script>
+    document.querySelectorAll('input').forEach(el => el.classList.add('form-control'));
+</script>
+{% endblock %}

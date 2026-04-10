@@ -1,0 +1,84 @@
+{% extends 'myapp/base.html' %}
+
+{% block content %}
+<div class="flex justify-between items-center mb-8">
+    <div>
+        <h2>Owner Dashboard</h2>
+        <p class="text-muted">Need an assistant for booking workflows or availability checks? Use Gemini AssistMe whenever you like.</p>
+    </div>
+    <div class="flex gap-2">
+        <a href="{% url 'assistant_chat' %}" class="btn btn-secondary">Open AssistMe</a>
+        <a href="{% url 'add_property' %}" class="btn btn-primary">+ Add New Property</a>
+    </div>
+</div>
+
+<h3>My Properties</h3>
+<div class="grid mt-4 mb-8">
+    {% for prop in properties %}
+        <div class="card">
+            <div class="card-img-wrap">
+                {% if prop.image %}
+                    <img src="{{ prop.image.url }}" alt="{{ prop.title }}" class="card-img">
+                {% else %}
+                    <div class="card-empty-img">No image</div>
+                {% endif %}
+            </div>
+            <div class="card-content">
+                <h4 class="card-title">{{ prop.title }}</h4>
+                <p class="card-location">{{ prop.location }}</p>
+                <div class="card-price">${{ prop.price }} / month</div>
+                <div class="flex gap-2">
+                    <a href="{% url 'property_detail' prop.pk %}" class="btn btn-secondary w-full">Details</a>
+                    <a href="{% url 'add_slot' prop.pk %}" class="btn btn-primary w-full">+ Slot</a>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <p class="empty-state">You have not listed any properties yet.</p>
+    {% endfor %}
+</div>
+
+<h3>Booking Requests</h3>
+<div class="table-wrapper">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th>Buyer</th>
+                <th>Slot Time</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for booking in bookings %}
+                <tr>
+                    <td class="font-bold">{{ booking.slot.property.title }}</td>
+                    <td>
+                        {{ booking.buyer.username }}
+                        <a href="{% url 'chat' booking.buyer.id %}" class="text-primary mt-2 flex">Message</a>
+                    </td>
+                    <td class="text-muted">{{ booking.slot.date }} at {{ booking.slot.time }}</td>
+                    <td>
+                        <span class="badge {% if booking.status == 'PENDING' %}badge-pending{% elif booking.status == 'APPROVED' %}badge-approved{% else %}badge-rejected{% endif %}">{{ booking.status }}</span>
+                    </td>
+                    <td>
+                        {% if booking.status == 'PENDING' %}
+                            <div class="flex gap-2">
+                                <a href="{% url 'approve_booking' booking.pk %}" class="btn btn-success" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">Approve</a>
+                                <a href="{% url 'reject_booking' booking.pk %}" class="btn btn-danger" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">Reject</a>
+                            </div>
+                        {% else %}
+                            <span class="text-muted">Done</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center text-muted">No booking requests found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
